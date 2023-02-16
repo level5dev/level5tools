@@ -1,0 +1,38 @@
+#consent-manager-update-banner {
+    background-color: $color-black !important;
+}
+.css-10z1g2q { 
+    background-color: $color-black !important;
+    .css-ra9y5f {
+        p {
+            color: $color-white;
+        }
+    }
+
+}
+
+// ITS ATC modal 
+.card-atc-modal {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal-body--wf {
+    min-height: 0;
+}
+
+.modal.modal--large:has([data-card-atc-modal]) {
+    min-height: 420px;
+}
+
+
+.page--product .modal {
+    min-height: fit-content;
+    padding-top: 2rem;
+}

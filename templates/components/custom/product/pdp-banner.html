@@ -1,0 +1,89 @@
+{{assignVar 'bds-percentageOff' 0}}
+
+{{#each product.category}}
+    {{#contains this "Sale/"}}
+        {{assignVar 'bds-amount' (toInt (last (split this '/')))}}
+
+        {{#if (getVar 'bds-percentageOff') '<' (getVar 'bds-amount')}}
+            {{assignVar 'bds-percentageOff' (getVar 'bds-amount')}}
+        {{/if}}
+    {{/contains}}
+{{/each}}
+
+{{!--  Maths:  parseFloat(((100 - bds-percentageOff) * 0.01 * price).toFixed(2)) --}}
+
+<!--{{#if (getVar 'bds-percentageOff') '!==' 0}}
+{{!-- data-percentage-off is required for the JS logic to update the pricing --}}
+{{!-- this snippet: {{getVar 'bds-percentageOff'}} is how you get the percentage off --}}
+    <div class="pdp-banner pdp-banner--sale" data-percentage-off="{{getVar 'bds-percentageOff'}}">
+        {{#filter product.custom_fields '__banner-off-text' property='name'}}
+            <p class="pdp-banner__heading h2">VALENTINE'S DAY SALE</p>
+            <ul class="pdp-banner__list">
+                    <li class="pdp-banner__text">
+                        THIS ITEM IS CURRENTLY <span style="color:red;">{{getVar 'bds-percentageOff'}}%</span> OFF!
+                    </li>
+                {{#if ../product.price.without_tax.value '>' 49.99}}
+                    <li class="pdp-banner__text">
+                        <span style="color:red;">FREE</span> FAST SHIPPING*
+                    </li>
+                {{/if}}
+                {{#filter ../product.custom_fields '__banner-off-custom-text' property='name'}}
+                    <li class="pdp-banner__text">
+                        {{this.value}}
+                    </li>
+                {{else}}
+                    {{#if (lang 'custom.product.sale-banner.line-3.enabled') '===' 'true'}}
+                        <li class="pdp-banner__text">
+                            {{lang 'custom.product.sale-banner.line-3.line-3-default-text'}}
+                        </li>
+                    {{/if}}
+                {{/filter}}
+            </ul>
+        {{/filter}}
+    </div>
+{{/if}}-->
+
+{{#if product.out_of_stock}}
+    <div class="pdp-banner pdp-banner--sold-out">
+        <p class="pdp-banner__heading h2">{{lang 'custom.product.sold-out-banner.heading'}}</p>
+        <p class="pdp-banner__text">{{{lang 'custom.product.sold-out-banner.text'}}}</p>
+    </div>
+{{/if}}
+
+{{#filter product.custom_fields '__l5vip10' property='name'}}
+    <div class="pdp-banner pdp-banner--sale">
+        <p class="pdp-banner__heading h2">BECOME A LEVEL5 VIP & SAVE MORE!</p>
+        <ul class="pdp-banner__list">
+                <li class="pdp-banner__text">
+                    Use coupon code <strong>L5VIP10</strong> during checkout to get additional VIP discount.
+                </li>
+        </ul>
+    </div>
+{{/filter}}
+
+            {{#filter product.custom_fields '__banner-off-text' property='name'}}
+                <div class="pdp-banner pdp-banner--sale">
+                        <p class="pdp-banner__heading h2">VALENTINE'S DAY SALE</p>
+                    <ul class="pdp-banner__list">
+                            <li class="pdp-banner__text">
+                                THIS ITEM IS CURRENTLY <span style="color:red;">{{{this.value}}}</span> OFF!
+                            </li>
+                        {{#if ../product.price.without_tax.value '>' 49.99}}
+                            <li class="pdp-banner__text">
+                                <span style="color:red;">FREE</span> FAST SHIPPING*
+                            </li>
+                        {{/if}}
+                        {{#filter ../product.custom_fields '__banner-off-custom-text' property='name'}}
+                            <li class="pdp-banner__text">
+                                {{this.value}}
+                            </li>
+                        {{else}}
+                            {{#if (lang 'custom.product.sale-banner.line-3.enabled') '===' 'true'}}
+                                <li class="pdp-banner__text">
+                                    {{lang 'custom.product.sale-banner.line-3.line-3-default-text'}}
+                                </li>
+                            {{/if}}
+                        {{/filter}}
+                    </ul>
+                </div>
+            {{/filter}}
