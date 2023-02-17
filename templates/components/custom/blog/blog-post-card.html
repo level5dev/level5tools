@@ -1,5 +1,7 @@
 <!-- SSCODE: add data-link atribute -->
-<article class="blog-post__card" data-link="{{post.url}}">
+<article class="blog-post__card" data-link="{{post.url}}" data-filter="{{#each post.tags}}
+                         {{name}} 
+                        {{/each}}">
     <div class="blog-post__card-container"> 
         {{#if post.thumbnail}}
             <figure class="blog-post__card-thumbnail">
@@ -43,7 +45,7 @@
         {{else}}
         {{/if}}
 
-        {{#if show_tags}}
+        <!-- {{#if show_tags}}
             {{#if post.tags}}
                 <ul class="blog-post__card-tags">
                     {{#each post.tags}}
@@ -53,7 +55,7 @@
                     {{/each}}
                 </ul>
             {{/if}}
-        {{/if}}
+        {{/if}} -->
 
         {{>components/common/share url=post.url}}
     </div>

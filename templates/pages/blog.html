@@ -1,12 +1,13 @@
 ---
 blog:
     posts:
-        limit: 7
+        limit: 100
         pages: 3
         summary: 200
 ---
 
 {{#partial "page"}}
+{{inject "posts" blog.posts}}
 
 {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
 
@@ -64,7 +65,7 @@ blog:
             </div> -->--}}
         </section>
         <section class="blog-posts">
-            <div class="blog-posts__container">
+            <div id="blogPostsContainer" class="blog-posts__container">
                 {{#each blog.posts}}
                     {{> components/custom/blog/blog-post-card post=this store_logo=../settings.store_logo.image show_tags=true}}
                 {{/each}}
@@ -82,8 +83,10 @@ blog:
                 sidebar_title=(lang 'custom.blog.sidebar.recent-posts.heading')
             }}
 
-            {{> components/custom/blog/blog-sidebar-most-popular}}
-            {{> components/custom/blog/blog-sidebar-finishers-pick}}
+            <!-- {{> components/custom/blog/blog-sidebar-most-popular}}
+            {{> components/custom/blog/blog-sidebar-finishers-pick}} -->
+            {{> components/custom/blog/blog-sidebar-filter-by-tag}}
+            {{> components/custom/blog/blog-sidebar-filter-by-product}}
             {{> components/custom/blog/blog-sidebar-block
                 partial='blog-sidebar-newsletter'
                 sidebar_title=(lang 'custom.blog.sidebar.newsletter.heading')
@@ -99,6 +102,8 @@ blog:
          });
         }
     </script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+    
 {{/unless}}
 {{/partial}}
 {{> layout/base container_active=true}}
