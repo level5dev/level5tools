@@ -197,8 +197,8 @@
     "overlay-backgroundColor": "#444444",
     "loadingOverlay-backgroundColor": "#ffffff",
     "optimizedCheckout-header-backgroundColor": "#f5f5f5",
-    "optimizedCheckout-show-backgroundImage": false,
-    "optimizedCheckout-backgroundImage": "",
+    "optimizedCheckout-show-backgroundImage": true,
+    "optimizedCheckout-backgroundImage": "https://cdn11.bigcommerce.com/s-89a9ntp16/images/stencil/{:size}/red-splatter_1666165826__38028.jpg",
     "optimizedCheckout-backgroundImage-size": "1000x400",
     "optimizedCheckout-show-logo": "none",
     "optimizedCheckout-logo": "",
@@ -462,8 +462,7 @@
           "home_garden"
         ]
       },
-      "images": {
-      },
+      "images": {},
       "settings": {
         "its": {
           "brand_carousel": false,

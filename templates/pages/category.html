@@ -4,8 +4,18 @@ category:
     products:
         limit: {{theme_settings.categorypage_products_per_page}}
 ---
+{{#if (getVar 'UUIDcounter')}}
+    {{assignVar 'UUIDcounter' (add (getVar 'UUIDcounter') 1)}}
+    {{assignVar 'UUIDcatc' (add (toInt (moment unixtimestamp format="x")) (getVar 'UUIDcounter'))}}
+{{else}}
+    {{assignVar 'UUIDcounter' 1}}
+    {{assignVar 'UUIDcatc' (toInt (moment unixtimestamp format="x"))}}
+{{/if}}
+
+{{inject "UUIDcatc" (getVar 'UUIDcounter')}}
 {{inject "categoryProductsPerPage" theme_settings.categorypage_products_per_page}}
 {{inject "categoryId" category.id}}
+{{inject "subcategories" category.subcategories}}
 
 {{#partial "head"}}
     {{#if pagination.category.previous}}
@@ -27,10 +37,7 @@ category:
             <!--{{{region name="category_below_header"}}}-->
         {{/unless}}
     </div>
-
-
-
-
+    
     {{#if category.subcategories}}
     <section class="categoryGrid container">
         
@@ -82,9 +89,93 @@ category:
     {{#if theme_settings.its.category_subcat_cards}}
         {{> components/custom/subcat-grid}}
     {{/if}}
-
-    <section class="container" id="product-listing-container">
-        {{> components/category/product-listing}}
+    
+    <!-- SSCODE: MOBILE SORT/FILTER SELECTOR -->
+    <section class="container" id="product-filter-container">
+        <button class="sort--button" type="button" onclick="sortfilterBtn()">SORT/FILTER</button>
+        <div class="actionBar filter--section_mobile" >
+                <fieldset class="form-fieldset actionBar-section" >
+                    <div class="form-field" align="left">
+                        <!-- SSCODE: SORT SELECTOR -->
+                        <label class="form-label" for="sort">{{lang 'common.sorter.sort_by'}}</label>
+                        <select class="form-select form-select--small " name="sort" id="all-sort-select-mobile" role="listbox">
+                            <option value="best_selling-desc" {{#if sort '==' 'bestselling'}}selected{{/if}}>{{lang 'common.sorter.top_sellers'}}</option>
+                            <option value="newest-asc" {{#if sort '==' 'newest'}}selected{{/if}}>{{lang 'common.sorter.newest'}}</option>
+                            <option value="name-asc" {{#if sort '==' 'alphaasc'}}selected{{/if}}>{{lang 'common.sorter.alpha_asc'}}</option>
+                            <option value="name-desc" {{#if sort '==' 'alphadesc'}}selected{{/if}}>{{lang 'common.sorter.alpha_desc'}}</option>
+                            <option value="review-desc" {{#if sort '==' 'avgcustomerreview'}}selected{{/if}}>{{lang 'common.sorter.reviews'}}</option>
+                            <option value="price-asc" {{#if sort '==' 'priceasc'}}selected{{/if}}>{{lang 'common.sorter.price_asc'}}</option>
+                            <option value="price-desc" {{#if sort '==' 'pricedesc'}}selected{{/if}}>{{lang 'common.sorter.price_desc'}}</option>
+                            {{#if (length category.subcategories) '===' 0 }}
+                                <option value="custom_sort_order-asc" {{#if sort '==' 'pricedesc'}}selected{{/if}}>Default</option>
+                            {{/if}}
+                            {{#if result_count}}
+                                <option value="relevance" {{#if sort '==' 'relevance'}}selected{{/if}}>{{lang 'common.sorter.relevance'}}</option>
+                            {{/if}}
+                        </select>
+                        <br>
+                        <!-- SSCODE: FILTER SELECTOR -->
+                        {{#if category.subcategories}}
+                        <label class="form-label" for="sort">Filter by:</label>
+                        <br>
+                        {{#each category.subcategories}}
+                            <div class="filter-option">
+                            <label class="form-label" for="sort">{{category.subcategories.length}}</label>
+                                <input type="checkbox" filter-value="{{id}}" checkbox-filter-all name="filter-all"><label class="form-label" for="filter-all" style="color:black; font-weight: 200;">{{name}}</label>
+                                <br>
+                            </div>
+                        {{/each}}  
+                        {{/if}}
+                    </div>
+                    <button type="button" class="close--button" onclick="closeBtn()">DONE</button>
+                </fieldset>
+            </div>
+    </section>
+    
+    <!-- SSCODE: DESKTOP VER. SORT/FILTER SELECTOR +  DISPLAY PRODUCTS -->
+    <section id="product-listing-all">
+        <div class="flex-div-section">
+            <div class="actionBar filter--section" >
+                <fieldset class="form-fieldset actionBar-section" >
+                    <div class="form-field" align="left">
+                        <label class="form-label" for="sort">{{lang 'common.sorter.sort_by'}}</label>
+                        <select class="form-select form-select--small " name="sort" id="all-sort-select" role="listbox">
+                            <option value="best_selling-desc" {{#if sort '==' 'bestselling'}}selected{{/if}}>{{lang 'common.sorter.top_sellers'}}</option>
+                            <option value="newest-asc" {{#if sort '==' 'newest'}}selected{{/if}}>{{lang 'common.sorter.newest'}}</option>
+                            <option value="name-asc" {{#if sort '==' 'alphaasc'}}selected{{/if}}>{{lang 'common.sorter.alpha_asc'}}</option>
+                            <option value="name-desc" {{#if sort '==' 'alphadesc'}}selected{{/if}}>{{lang 'common.sorter.alpha_desc'}}</option>
+                            <option value="review-desc" {{#if sort '==' 'avgcustomerreview'}}selected{{/if}}>{{lang 'common.sorter.reviews'}}</option>
+                            <option value="price-asc" {{#if sort '==' 'priceasc'}}selected{{/if}}>{{lang 'common.sorter.price_asc'}}</option>
+                            <option value="price-desc" {{#if sort '==' 'pricedesc'}}selected{{/if}}>{{lang 'common.sorter.price_desc'}}</option>
+                            {{#if (length category.subcategories) '===' 0 }}
+                                <option value="custom_sort_order-asc" {{#if sort '==' 'pricedesc'}}selected{{/if}}>Default</option>
+                            {{/if}}
+                            {{#if result_count}}
+                                <option value="relevance" {{#if sort '==' 'relevance'}}selected{{/if}}>{{lang 'common.sorter.relevance'}}</option>
+                            {{/if}}
+                        </select>
+                        <br>
+                        {{#if category.subcategories}}
+                        <label class="form-label" for="sort">Filter by:</label>
+                        <br>
+                        {{#each category.subcategories}}
+                        <div class="filter-option">
+                            <label class="form-label" for="sort">{{category.subcategories.length}}</label>
+                            <input type="checkbox" filter-value="{{id}}" checkbox-filter-all name="filter-all"><label class="form-label" for="filter-all" style="color:black; font-weight:200;">{{name}}</label>
+                            <br>
+                        </div>
+                        {{/each}}
+                        {{/if}}
+                    </div>
+                </fieldset>
+            </div>
+            <div class="lds-block">
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+            </div>
+            <div class="grid" id="grid-all-product">
+                
+            </div>
+        </div>
     </section>
 
     {{#if banners.bottom}}
@@ -131,5 +222,221 @@ category:
     <div class="loadingOverlay loadingOverlay--product-listing"></div>
 </div>
 
+<style>
+    .grid {
+        /* background: #DDD; */
+        display: none;
+        max-width: 1200px;
+        width: 1200px;
+        gap: 50px;
+        place-items: center;
+        margin-top: 10px;
+    }
+
+    .grid:after {
+        content: '';
+        display: block;
+        clear: both;
+        margin-top: 10px;
+    }
+
+    /* ---- .grid-item ---- */
+
+    .product {
+        float: center;
+        width: 25%;
+        min-width: 280px;
+        height: 450px;
+        padding-bottom: 20px;
+        padding-right: 20px;
+    }
+    
+    .flex-div-section {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .filter--section{
+        width: 300px;
+        margin-right: 25px;
+    }
+
+    #product-listing-all{
+        margin-left: 35px;
+    }
+
+    /***************************************************************************/
+
+    .lds-block {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 1200px;
+        z-index: 999;
+    }
+
+    .lds-ring {
+        display: inline-block;
+        position: relative;
+        margin-top: 100px;
+        margin-bottom: 100px;
+        width: 80px;
+        height: 80px;
+    }
+    
+    .lds-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 8px solid #3498db;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #3498db transparent transparent transparent;
+    }
+    
+    .lds-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+    
+    .lds-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+    
+    .lds-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+    
+    @keyframes lds-ring {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg);  }
+    }
+    
+    input[type='checkbox'] {
+        accent-color: red;
+        width: 20px;
+        height: 20px;
+    }
+    
+    input[type="checkbox"]:active{
+        outline:none;
+    }
+    
+    .filter--section_mobile { 
+        display:none;
+    }
+    
+    .sort--button {
+        font-family: "Roboto", Arial, Helvetica, sans-serif;
+        background-color: #f9f9f9;
+        border-radius: 2px;
+        margin-left: 20px;
+        margin-bottom: 25px;
+        padding: 5px;
+        padding-right: 10px;
+        padding-left: 10px;
+        outline-color: transparent;
+        outline-style: solid;
+        box-shadow: 0 0 0 0.5px #b8000d;
+    }
+    
+    .close--button {
+        font-family: "Roboto", Arial, Helvetica, sans-serif;
+        margin-bottom: 30px;
+        background-color: #c60b2e;
+        color: #faebd7;
+        width: -webkit-fill-available;
+        padding: 5px;
+    }
+    
+     div.filter-option {
+        display: flex;
+        align-items: center;
+    }
+        
+    .filter-option {
+        font-family: "Oswald", Arial, Helvetica, sans-serif;
+        text-transform: uppercase;
+        font-weight: inherit;
+    }
+        
+    .form-select--small {
+        font-family: "Oswald", Arial, Helvetica, sans-serif;
+        text-transform: uppercase;
+        font-weight: 200;
+        color: black;
+    }
+    
+    @media only screen and (max-width: 600px) {
+        .filter--section { display:none; }
+        #product-filter-container {  display:block; } 
+        .actionBar.filter--section_mobile { 
+            width:275px;
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+        #product-listing-all {
+            margin-left: 0px;
+        }
+        .product {
+            right: 0px ;
+            padding-right: 0px;
+            margin: auto;
+            width: 90%;
+            min-height: auto;
+            height:auto !important;
+        }
+        
+        figure.card-figure {
+            overflow: visible;
+        }
+        
+        .lds-block {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 50px;
+            z-index: 999;
+            position: absolute;
+        }
+        
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            margin-top: 100px;
+            margin-bottom: 100px;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 8px solid #3498db;
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: #3498db transparent transparent transparent;
+        }
+    }
+    
+    @media only screen and (min-width: 600px) {
+        .filter--section { display:block; }
+        #product-filter-container { display:none; }
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+<script>
+    function sortfilterBtn(){ document.querySelector('.filter--section_mobile').style.display = "block"; }
+    function closeBtn() { document.querySelector('.filter--section_mobile').style.display = "none"; }
+</script>
 {{/partial}}
 {{> layout/base container_active=false}}

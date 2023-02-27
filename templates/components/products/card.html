@@ -155,7 +155,8 @@
                     {{#if settings.data_tag_enabled}}
                         <button type="button" class="button button--primary quickview button--quickview" data-event-type="product-click" data-product-id="{{id}}">{{lang 'products.quick_view'}}</button>
                     {{else}}
-                        <button type="button" class="button button--primary quickview button--quickview" data-product-id="{{id}}">{{lang 'products.quick_view'}}</button>
+                        <button type="button" onclick="window.location.href='{{url}}';" class="button button--primary button--quickview" >{{lang 'products.quick_view'}}</button>
+                        <!-- <button type="button" class="button button--primary quickview button--quickview" data-product-id="{{id}}">{{lang 'products.quick_view'}}</button> -->
                     {{/if}}
                 {{/if}}
             {{/unless}}
